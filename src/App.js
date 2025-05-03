@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-// Replace with your actual Render backend URL or use .env
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://clarity-backend.onrender.com";
-const socket = io(BACKEND_URL);
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
+const socket = io(BACKEND_URL, {
+  transports: ["websocket"],
+  upgrade: false,
+});
 
 const categories = ["general", "technology", "business", "sports", "entertainment"];
 
@@ -12,7 +15,6 @@ function App() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch news by category
   useEffect(() => {
     setLoading(true);
     fetch(`${BACKEND_URL}/news/${category}`)
@@ -27,7 +29,6 @@ function App() {
       });
   }, [category]);
 
-  // Listen to live news updates via socket
   useEffect(() => {
     const handleNewsUpdate = (updatedNews) => {
       if (updatedNews[category]) {
