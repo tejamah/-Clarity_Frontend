@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("https://your-backend-url.onrender.com"); // Replace with your real Render backend
+// Replace with your actual Render backend URL or use .env
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://clarity-backend.onrender.com";
+const socket = io(BACKEND_URL);
 
 const categories = ["general", "technology", "business", "sports", "entertainment"];
 
@@ -10,9 +12,10 @@ function App() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch news by category
   useEffect(() => {
     setLoading(true);
-    fetch(`https://your-backend-url.onrender.com/news/${category}`)
+    fetch(`${BACKEND_URL}/news/${category}`)
       .then((res) => res.json())
       .then((data) => {
         setArticles(data);
@@ -24,6 +27,7 @@ function App() {
       });
   }, [category]);
 
+  // Listen to live news updates via socket
   useEffect(() => {
     const handleNewsUpdate = (updatedNews) => {
       if (updatedNews[category]) {
@@ -53,7 +57,7 @@ function App() {
               borderRadius: "20px",
               cursor: "pointer",
               fontWeight: "bold",
-              textTransform: "capitalize"
+              textTransform: "capitalize",
             }}
           >
             {cat}
@@ -75,7 +79,7 @@ function App() {
                 padding: "20px",
                 marginBottom: "20px",
                 borderRadius: "10px",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
               }}
             >
               <h2>{article.title}</h2>
@@ -83,7 +87,13 @@ function App() {
                 <img
                   src={article.image}
                   alt="News"
-                  style={{ width: "100%", maxHeight: 300, objectFit: "cover", borderRadius: 8 }}
+                  style={{
+                    width: "100%",
+                    maxHeight: 300,
+                    objectFit: "cover",
+                    borderRadius: 8,
+                    marginTop: 10,
+                  }}
                 />
               )}
               <p style={{ marginTop: 10 }}>{article.summary}</p>
